@@ -27,9 +27,9 @@ namespace Graphics1
             set { _thickness = value; }
         }
 
-        private void Bresenham(Point startPoint, Point endPoint, Size pictureBox, PaintEventArgs e)
+        private void Bresenham(Point startPoint, Point endPoint, Size pictureBox, Graphics graphics)
         {
-            Graphics graphics = e.Graphics;
+
             Bitmap bitmap = new Bitmap(pictureBox.Width, pictureBox.Height);
 
             int xi = 0, yi = 0, dx = 0, dy = 0, d;
@@ -81,6 +81,8 @@ namespace Graphics1
                         currentPoint.X += xi;
                     }
                     bitmap.SetPixel(currentPoint.X, currentPoint.Y, Color.Black);
+                    
+
                 }
 
 
@@ -110,15 +112,18 @@ namespace Graphics1
             }
 
             graphics.DrawImage(bitmap, 0, 0, bitmap.Width, bitmap.Height);
+            //graphics.Dispose();
         }
 
-        public void Draw(Size pictureBox, PaintEventArgs e)
+        public void Draw(Size pictureBox, Graphics e)
         {
+            
             for (int i = 0; i < Points.Count - 1; i++)
             {
                 Bresenham(Points[i], Points[i + 1], pictureBox, e);
             }
-            Bresenham(Points[0], Points[Points.Count - 1], pictureBox, e);
+            Bresenham(Points[0], Points[Points.Count - 1], pictureBox,  e);
+            
         }
     }
 }

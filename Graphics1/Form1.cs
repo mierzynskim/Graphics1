@@ -38,8 +38,6 @@ namespace Graphics1
             MouseEventArgs MouseE = (MouseEventArgs)e;
             pictureLocation = new Point(MouseE.X, MouseE.Y);
 
-            
-
             if (pointsClicked == 0)
             {
                 polygons.Add(new Polygon());
@@ -49,12 +47,12 @@ namespace Graphics1
             polygons[currentPolygon].Points.Add(pictureLocation);
 
             pointsClicked++;
-            pictureBox.Invalidate();
+            this.Invalidate();
         }
 
-        private void DrawPoint(Point location, PaintEventArgs e)
+        private void DrawPoint(Point location, Graphics graphics)
         {
-            Graphics graphics = e.Graphics;
+            
             Rectangle rectangle = new System.Drawing.Rectangle(location.X - 5, location.Y - 5, 10, 10);
             SolidBrush myBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Red);
             graphics.FillEllipse(myBrush, rectangle);
@@ -89,7 +87,7 @@ namespace Graphics1
         {
             //polygons[currentPolygon].Draw(ref pictureBox);
             IsEdit = true;
-            pictureBox.Invalidate();
+            this.Invalidate();
             pointsClicked = 0;
             currentPolygon++;
         }
@@ -117,49 +115,37 @@ namespace Graphics1
         //        }
         //    }
         //}
-        //TO DO po minimalizacji wielokąty znikają :(
         private void pictureBox_Paint(object sender, PaintEventArgs e)
         {
             //if (bitmap != null)
             //    e.Graphics.DrawImage(bitmap, 0, 0, bitmap.Width, bitmap.Height);
-            if (polygons.Count != 0 )
-            {
-                foreach (var poly in polygons)
-                {
-                    
-                        foreach (var point in poly.Points)
-                        {
-                            DrawPoint(point, e);
+            
 
-                        }
-                    if (IsEdit)
-                        poly.Draw(pictureBox.Size, e);
-                }
-            }
-
-                
-
-            //    //pictureBox.Invalidate();
-            //}
+            
         }
 
-        //protected override void OnPaint(PaintEventArgs e)
-        //{
-        //    if (polygons.Count != 0)
-        //    {
-        //        foreach (var poly in polygons)
-        //        {
-        //            foreach (var point in poly.Points)
-        //            {
-        //                Rectangle rectangle = new System.Drawing.Rectangle(point.X - 5, point.Y - 5, 10, 10);
-        //                SolidBrush myBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Red);
-        //                e.Graphics.FillEllipse(myBrush, rectangle);
-                        
-        //            }
-        //            poly.Draw(ref pictureBox);
-        //        }
-        //    }
-        //}
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+            if (polygons.Count != 0)
+            {
+                using (Graphics g = pictureBox.CreateGraphics())
+                {
+                    foreach (var poly in polygons)
+                    {
+                        foreach (var point in poly.Points)
+                        {
+                            DrawPoint(point, g);
+
+                        }
+                        if (IsEdit)
+                            poly.Draw(pictureBox.Size, g);
+                    }
+                    g.Dispose();
+                }
+
+            }
+        }
 
 
 
