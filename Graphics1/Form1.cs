@@ -14,21 +14,17 @@ namespace Graphics1
 {
     public partial class Form1 : Form
     {
-        private Point _pictureLocation;
-        private List<Polygon> _polygons = new List<Polygon>();
-        private int _pointsClicked;
-        private int _currentPolygon;
-        private Bitmap bitmap;
+        private Point pictureLocation;
+        private List<Polygon> polygons = new List<Polygon>();
+        private int pointsClicked;
+        private int currentPolygon;
 
-//#if (DEBUG)
-//        private List<Point> lista = new List<Point>();
-//        private int liczba;
-//#endif
+        private bool IsEdit = true;
 
         public List<Polygon> Polygons
         {
-            get { return _polygons; }
-            set { _polygons = value; }
+            get { return polygons; }
+            set { polygons = value; }
         }
 
         
@@ -40,10 +36,19 @@ namespace Graphics1
         private void pictureBox_Click(object sender, EventArgs e)
         {
             MouseEventArgs MouseE = (MouseEventArgs)e;
-            _pictureLocation = new Point(MouseE.X, MouseE.Y);
+            pictureLocation = new Point(MouseE.X, MouseE.Y);
 
-            DrawPoint(_pictureLocation);
-            //SetPixelEx(_pictureLocation);
+            DrawPoint(pictureLocation);
+
+            if (pointsClicked == 0)
+            {
+                polygons.Add(new Polygon());
+                polygons[currentPolygon].Points = new List<Point>();
+            }
+
+            polygons[currentPolygon].Points.Add(pictureLocation);
+
+            pointsClicked++;
         }
 
         private void DrawPoint(Point location)
@@ -53,27 +58,6 @@ namespace Graphics1
             SolidBrush myBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Red);
             graphics.FillEllipse(myBrush, rectangle);
 
-            if (_pointsClicked == 0)
-            {
-                _polygons.Add(new Polygon());
-                _polygons[_currentPolygon].Points = new List<Point>();
-            }
-
-            _polygons[_currentPolygon].Points.Add(location);
-
-            _pointsClicked++;
-
-//#if (DEBUG)
-
-//            liczba++;
-//            lista.Add(location);
-
-//            if (liczba >= 2)
-//            {
-//                    Bresenham(lista[lista.Count - 2], lista[lista.Count - 1]);
-//            }
-//#endif
-   
         }
 
         private void SwapPoints(ref Point p1, ref Point p2)
@@ -100,147 +84,78 @@ namespace Graphics1
             return new Point(p.X, -p.Y);
         }
 
-        private void Bresenham(Point startPoint, Point endPoint)
-        {
-            Graphics graphics = pictureBox.CreateGraphics();
-            bitmap = new Bitmap(pictureBox.Width, pictureBox.Height);
-
-            int xi = 0, yi = 0, dx = 0, dy = 0, d;
-            
-            Point currentPoint = new Point(startPoint.X, startPoint.Y);
-
-            if (startPoint.X < endPoint.X)
-            {
-                xi = 1;
-                dx = endPoint.X - startPoint.X;
-            }
-            else if (startPoint.X > endPoint.X)
-            {
-                xi = -1;
-                dx = startPoint.X - endPoint.X;
-            }
-
-            if (startPoint.Y < endPoint.Y)
-            {
-                yi = 1;
-                dy = endPoint.Y - startPoint.Y;
-            }
-            else if (startPoint.Y > endPoint.Y)
-            {
-                yi = -1;
-                dy = startPoint.Y - endPoint.Y;
-            }
-
-
-            bitmap.SetPixel(currentPoint.X, currentPoint.Y, Color.Black);
-
-            if (dx > dy)
-            {
-                Debug.WriteLine("xi: {0} yi: {1} number {2} dx > dy", xi, yi, _pointsClicked); 
-                int incr1 = 2 * dy;
-                int incr2 = 2 * (dy - dx);
-                d = incr1 - dx;
-                while (currentPoint.X != endPoint.X)
-                {
-                    if (d < 0)
-                    {
-                        d += incr1;
-                        currentPoint.X += xi;
-                    }
-                    else
-                    {
-                        d += incr2;
-                        currentPoint.Y += yi;
-                        currentPoint.X += xi;
-                    }
-                    bitmap.SetPixel(currentPoint.X, currentPoint.Y, Color.Black);
-                }
-
-
-            }
-            else
-            {
-                Debug.WriteLine("xi: {0} yi: {1} number {2} dx <= dy", xi, yi, _pointsClicked); 
-                int incr1 = 2 * dx;
-                int incr2 = 2 * (dx - dy);
-                d = incr1 - dy;
-                while (currentPoint.Y != endPoint.Y)
-                {
-                    if (d < 0)
-                    {
-                        d += incr1;
-                        currentPoint.Y += yi;
-                    }
-                    else
-                    {
-                        d += incr2;
-                        currentPoint.Y += yi;
-                        currentPoint.X += xi;
-                    }
-                    bitmap.SetPixel(currentPoint.X, currentPoint.Y, Color.Black);
-                }
-               
-            }
-
-            graphics.DrawImage(bitmap, 0, 0, bitmap.Width, bitmap.Height);
-        }
-
         private void addButton_Click(object sender, EventArgs e)
         {
-            
-
-            for (int i = 0; i < _polygons[_currentPolygon].Points.Count - 1; i++)
-            {
-                Bresenham(_polygons[_currentPolygon].Points[i], _polygons[_currentPolygon].Points[i + 1]);
-            }
-            Bresenham(_polygons[_currentPolygon].Points[0], _polygons[_currentPolygon].Points[_pointsClicked - 1]);
-            _pointsClicked = 0;
-            _currentPolygon++;
+            polygons[currentPolygon].Draw(ref pictureBox);
+            pointsClicked = 0;
+            currentPolygon++;
         }
 
         private void editButton_Click(object sender, EventArgs e)
         {
             
-            TestMethod();
-            _currentPolygon++;
-            _pointsClicked = 0;
+            //TestMethod();
+            currentPolygon++;
+            pointsClicked = 0;
 
         }
 
-        private void TestMethod()
-        {
-            for (int i = 1; i < _polygons[_currentPolygon].Points.Count; i++)
-            {
-                try
-                {
-                    Bresenham(_polygons[_currentPolygon].Points[0], _polygons[_currentPolygon].Points[i]);
-                }
-                catch
-                {
-                    continue;
-                }
-            }
-        }
-
+        //private void TestMethod()
+        //{
+        //    for (int i = 1; i < polygons[currentPolygon].Points.Count; i++)
+        //    {
+        //        try
+        //        {
+        //            Polygon.Bresenham(polygons[currentPolygon].Points[0], polygons[currentPolygon].Points[i], ref pictureBox);
+        //        }
+        //        catch
+        //        {
+        //            continue;
+        //        }
+        //    }
+        //}
+        //TO DO po minimalizacji wielokąty znikają :(
         private void pictureBox_Paint(object sender, PaintEventArgs e)
         {
-            if (bitmap != null)
-                e.Graphics.DrawImage(bitmap, 0, 0, bitmap.Width, bitmap.Height);
-            //if (_polygons.Count != 0)
+            //if (bitmap != null)
+            //    e.Graphics.DrawImage(bitmap, 0, 0, bitmap.Width, bitmap.Height);
+            //if (polygons.Count != 0)
             //{
-            //    for (int i = 1; i < _polygons[0].Points.Count; i++)
+            //    foreach (var poly in polygons)
             //    {
-            //        try
+            //        foreach (var point in poly.Points)
             //        {
-            //            Bresenham(_polygons[0].Points[0], _polygons[0].Points[i]);
+            //            Rectangle rectangle = new System.Drawing.Rectangle(point.X - 5, point.Y - 5, 10, 10);
+            //            SolidBrush myBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Red);
+            //            e.Graphics.FillEllipse(myBrush, rectangle);
+                        
             //        }
-            //        catch
-            //        {
-            //            continue;
-            //        }
+            //        poly.Draw(ref pictureBox);
             //    }
+
+                
+
+            //    //pictureBox.Invalidate();
             //}
         }
+
+        //protected override void OnPaint(PaintEventArgs e)
+        //{
+        //    if (polygons.Count != 0)
+        //    {
+        //        foreach (var poly in polygons)
+        //        {
+        //            foreach (var point in poly.Points)
+        //            {
+        //                Rectangle rectangle = new System.Drawing.Rectangle(point.X - 5, point.Y - 5, 10, 10);
+        //                SolidBrush myBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Red);
+        //                e.Graphics.FillEllipse(myBrush, rectangle);
+                        
+        //            }
+        //            poly.Draw(ref pictureBox);
+        //        }
+        //    }
+        //}
 
 
 
