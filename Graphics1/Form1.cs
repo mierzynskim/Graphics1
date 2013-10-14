@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using System.Diagnostics;
+
 namespace Graphics1
 {
     public partial class Form1 : Form
@@ -16,6 +18,7 @@ namespace Graphics1
         private List<Polygon> _polygons = new List<Polygon>();
         private int _pointsClicked;
         private int _currentPolygon;
+        private Bitmap bitmap;
 
 //#if (DEBUG)
 //        private List<Point> lista = new List<Point>();
@@ -100,7 +103,7 @@ namespace Graphics1
         private void Bresenham(Point startPoint, Point endPoint)
         {
             Graphics graphics = pictureBox.CreateGraphics();
-            Bitmap bitmap = new Bitmap(pictureBox.Width, pictureBox.Height);
+            bitmap = new Bitmap(pictureBox.Width, pictureBox.Height);
 
             int xi = 0, yi = 0, dx = 0, dy = 0, d;
             
@@ -128,10 +131,12 @@ namespace Graphics1
                 dy = startPoint.Y - endPoint.Y;
             }
 
+
             bitmap.SetPixel(currentPoint.X, currentPoint.Y, Color.Black);
 
             if (dx > dy)
             {
+                Debug.WriteLine("xi: {0} yi: {1} number {2} dx > dy", xi, yi, _pointsClicked); 
                 int incr1 = 2 * dy;
                 int incr2 = 2 * (dy - dx);
                 d = incr1 - dx;
@@ -150,9 +155,12 @@ namespace Graphics1
                     }
                     bitmap.SetPixel(currentPoint.X, currentPoint.Y, Color.Black);
                 }
+
+
             }
             else
             {
+                Debug.WriteLine("xi: {0} yi: {1} number {2} dx <= dy", xi, yi, _pointsClicked); 
                 int incr1 = 2 * dx;
                 int incr2 = 2 * (dx - dy);
                 d = incr1 - dy;
@@ -161,7 +169,7 @@ namespace Graphics1
                     if (d < 0)
                     {
                         d += incr1;
-                        currentPoint.X += xi;
+                        currentPoint.Y += yi;
                     }
                     else
                     {
@@ -171,6 +179,7 @@ namespace Graphics1
                     }
                     bitmap.SetPixel(currentPoint.X, currentPoint.Y, Color.Black);
                 }
+               
             }
 
             graphics.DrawImage(bitmap, 0, 0, bitmap.Width, bitmap.Height);
@@ -178,18 +187,59 @@ namespace Graphics1
 
         private void addButton_Click(object sender, EventArgs e)
         {
-            _pointsClicked = 0;
+            
 
             for (int i = 0; i < _polygons[_currentPolygon].Points.Count - 1; i++)
             {
                 Bresenham(_polygons[_currentPolygon].Points[i], _polygons[_currentPolygon].Points[i + 1]);
             }
+            Bresenham(_polygons[_currentPolygon].Points[0], _polygons[_currentPolygon].Points[_pointsClicked - 1]);
+            _pointsClicked = 0;
             _currentPolygon++;
         }
 
         private void editButton_Click(object sender, EventArgs e)
         {
+            
+            TestMethod();
+            _currentPolygon++;
+            _pointsClicked = 0;
 
+        }
+
+        private void TestMethod()
+        {
+            for (int i = 1; i < _polygons[_currentPolygon].Points.Count; i++)
+            {
+                try
+                {
+                    Bresenham(_polygons[_currentPolygon].Points[0], _polygons[_currentPolygon].Points[i]);
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+        }
+
+        private void pictureBox_Paint(object sender, PaintEventArgs e)
+        {
+            if (bitmap != null)
+                e.Graphics.DrawImage(bitmap, 0, 0, bitmap.Width, bitmap.Height);
+            //if (_polygons.Count != 0)
+            //{
+            //    for (int i = 1; i < _polygons[0].Points.Count; i++)
+            //    {
+            //        try
+            //        {
+            //            Bresenham(_polygons[0].Points[0], _polygons[0].Points[i]);
+            //        }
+            //        catch
+            //        {
+            //            continue;
+            //        }
+            //    }
+            //}
         }
 
 
