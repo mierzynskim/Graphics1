@@ -19,7 +19,7 @@ namespace Graphics1
         private int pointsClicked;
         private int currentPolygon;
 
-        private bool IsEdit = true;
+        private bool IsEdit = false;
 
         public List<Polygon> Polygons
         {
@@ -38,7 +38,7 @@ namespace Graphics1
             MouseEventArgs MouseE = (MouseEventArgs)e;
             pictureLocation = new Point(MouseE.X, MouseE.Y);
 
-            DrawPoint(pictureLocation);
+            
 
             if (pointsClicked == 0)
             {
@@ -49,11 +49,12 @@ namespace Graphics1
             polygons[currentPolygon].Points.Add(pictureLocation);
 
             pointsClicked++;
+            pictureBox.Invalidate();
         }
 
-        private void DrawPoint(Point location)
+        private void DrawPoint(Point location, PaintEventArgs e)
         {
-            Graphics graphics = pictureBox.CreateGraphics();
+            Graphics graphics = e.Graphics;
             Rectangle rectangle = new System.Drawing.Rectangle(location.X - 5, location.Y - 5, 10, 10);
             SolidBrush myBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Red);
             graphics.FillEllipse(myBrush, rectangle);
@@ -86,7 +87,9 @@ namespace Graphics1
 
         private void addButton_Click(object sender, EventArgs e)
         {
-            polygons[currentPolygon].Draw(ref pictureBox);
+            //polygons[currentPolygon].Draw(ref pictureBox);
+            IsEdit = true;
+            pictureBox.Invalidate();
             pointsClicked = 0;
             currentPolygon++;
         }
@@ -119,19 +122,20 @@ namespace Graphics1
         {
             //if (bitmap != null)
             //    e.Graphics.DrawImage(bitmap, 0, 0, bitmap.Width, bitmap.Height);
-            //if (polygons.Count != 0)
-            //{
-            //    foreach (var poly in polygons)
-            //    {
-            //        foreach (var point in poly.Points)
-            //        {
-            //            Rectangle rectangle = new System.Drawing.Rectangle(point.X - 5, point.Y - 5, 10, 10);
-            //            SolidBrush myBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Red);
-            //            e.Graphics.FillEllipse(myBrush, rectangle);
-                        
-            //        }
-            //        poly.Draw(ref pictureBox);
-            //    }
+            if (polygons.Count != 0 )
+            {
+                foreach (var poly in polygons)
+                {
+                    
+                        foreach (var point in poly.Points)
+                        {
+                            DrawPoint(point, e);
+
+                        }
+                    if (IsEdit)
+                        poly.Draw(pictureBox.Size, e);
+                }
+            }
 
                 
 
