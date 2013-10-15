@@ -47,7 +47,7 @@ namespace Graphics1
             polygons[currentPolygon].Points.Add(pictureLocation);
 
             pointsClicked++;
-            this.Invalidate();
+            pictureBox.Invalidate();
         }
 
         private void DrawPoint(Point location, Graphics graphics)
@@ -87,7 +87,7 @@ namespace Graphics1
         {
             //polygons[currentPolygon].Draw(ref pictureBox);
             IsEdit = true;
-            this.Invalidate();
+            pictureBox.Invalidate();
             pointsClicked = 0;
             currentPolygon++;
         }
@@ -119,18 +119,10 @@ namespace Graphics1
         {
             //if (bitmap != null)
             //    e.Graphics.DrawImage(bitmap, 0, 0, bitmap.Width, bitmap.Height);
-            
-
-            
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
             if (polygons.Count != 0)
             {
-                using (Graphics g = pictureBox.CreateGraphics())
-                {
+                Graphics g = e.Graphics;
+
                     foreach (var poly in polygons)
                     {
                         foreach (var point in poly.Points)
@@ -141,10 +133,33 @@ namespace Graphics1
                         if (IsEdit)
                             poly.Draw(pictureBox.Size, g);
                     }
-                    g.Dispose();
-                }
+
 
             }
+
+            
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+            //if (polygons.Count != 0)
+            //{
+            //    using (Graphics g = pictureBox.CreateGraphics())
+            //    {
+            //        foreach (var poly in polygons)
+            //        {
+            //            foreach (var point in poly.Points)
+            //            {
+            //                DrawPoint(point, g);
+
+            //            }
+            //            if (IsEdit)
+            //                poly.Draw(pictureBox.Size, g);
+            //        }
+            //    }
+
+            //}
         }
 
 
