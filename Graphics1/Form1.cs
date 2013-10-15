@@ -18,8 +18,7 @@ namespace Graphics1
         private List<Polygon> polygons = new List<Polygon>();
         private int pointsClicked;
         private int currentPolygon;
-
-        private bool IsEdit = false;
+        private int? selectedId = null;
 
         public List<Polygon> Polygons
         {
@@ -27,7 +26,7 @@ namespace Graphics1
             set { polygons = value; }
         }
 
-        
+
         public Form1()
         {
             InitializeComponent();
@@ -38,106 +37,72 @@ namespace Graphics1
             MouseEventArgs MouseE = (MouseEventArgs)e;
             pictureLocation = new Point(MouseE.X, MouseE.Y);
 
-            if (pointsClicked == 0)
+            if (newPolygon.Checked)
             {
-                polygons.Add(new Polygon());
-                polygons[currentPolygon].Points = new List<Point>();
+
+                if (pointsClicked == 0)
+                {
+                    polygons.Add(new Polygon());
+                    polygons.Last().Points = new List<Point>();
+                    polygons.Last().IsFinished = false;
+                }
+
+                polygons.Last().Points.Add(pictureLocation);
+
+                pointsClicked++;
+                
+            }
+            else
+            {
+                polygons[(int)selectedId].Points.Add(pictureLocation);
             }
 
-            polygons[currentPolygon].Points.Add(pictureLocation);
-
-            pointsClicked++;
             pictureBox.Invalidate();
         }
 
-        private void DrawPoint(Point location, Graphics graphics)
+        private void DrawPoint(Point location, Graphics graphics, Color color)
         {
-            
-            Rectangle rectangle = new System.Drawing.Rectangle(location.X - 5, location.Y - 5, 10, 10);
-            SolidBrush myBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Red);
+
+            var rectangle = new Rectangle(location.X - 5, location.Y - 5, 10, 10);
+            var myBrush = new SolidBrush(color);
             graphics.FillEllipse(myBrush, rectangle);
 
         }
 
-        private void SwapPoints(ref Point p1, ref Point p2)
-        {
-            Point temp = p1;
-            p1 = new Point(p2.X, p2.Y);
-            p2 = new Point(temp.X, temp.Y);
-        }
-
-        private void SwapXY(ref Point p1, ref Point p2)
-        {
-            int temp = p1.X;
-            p1.X = p1.Y;
-            p1.Y = temp;
-
-            temp = p2.X;
-            p2.X = p2.Y;
-            p2.Y = temp;
-
-        }
-
-        private Point ConvertPoint(Point p)
-        {
-            return new Point(p.X, -p.Y);
-        }
-
         private void addButton_Click(object sender, EventArgs e)
         {
-            //polygons[currentPolygon].Draw(ref pictureBox);
-            IsEdit = true;
-            pictureBox.Invalidate();
-            pointsClicked = 0;
-            currentPolygon++;
+            if (newPolygon.Checked)
+            {
+                listView.Items.Add(String.Format("Wielokąt nr {0} o {1} wierzchołkach", currentPolygon + 1, pointsClicked));
+                pointsClicked = 0;
+                polygons.Last().IsFinished = true;
+                pictureBox.Invalidate();
+                currentPolygon++;
+
+            }
+            else
+            {
+                
+            }
         }
 
-        private void editButton_Click(object sender, EventArgs e)
-        {
-            
-            //TestMethod();
-            currentPolygon++;
-            pointsClicked = 0;
-
-        }
-
-        //private void TestMethod()
-        //{
-        //    for (int i = 1; i < polygons[currentPolygon].Points.Count; i++)
-        //    {
-        //        try
-        //        {
-        //            Polygon.Bresenham(polygons[currentPolygon].Points[0], polygons[currentPolygon].Points[i], ref pictureBox);
-        //        }
-        //        catch
-        //        {
-        //            continue;
-        //        }
-        //    }
-        //}
         private void pictureBox_Paint(object sender, PaintEventArgs e)
         {
-            //if (bitmap != null)
-            //    e.Graphics.DrawImage(bitmap, 0, 0, bitmap.Width, bitmap.Height);
             if (polygons.Count != 0)
             {
                 Graphics g = e.Graphics;
 
-                    foreach (var poly in polygons)
+                foreach (var poly in polygons)
+                {
+                    foreach (var point in poly.Points)
                     {
-                        foreach (var point in poly.Points)
-                        {
-                            DrawPoint(point, g);
+                        DrawPoint(point, g, !poly.IsSelected ? Color.Red : Color.Blue);
 
-                        }
-                        if (IsEdit)
-                            poly.Draw(pictureBox.Size, g);
                     }
-
-
+                    if (poly.IsFinished)
+                        poly.Draw(pictureBox.Size, g);
+                }
             }
-
-            
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -160,6 +125,36 @@ namespace Graphics1
             //    }
 
             //}
+        }
+
+        private void listView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            foreach (ListViewItem i in listView.Items)
+            {
+                if (i.Selected) 
+                {
+                    if (selectedId != null)
+                        polygons[(int)selectedId].IsSelected = false;
+                    selectedId = i.Index;
+                    polygons[(int)selectedId].IsSelected = true; 
+                }
+            }
+            
+            pictureBox.Invalidate();
+        }
+
+        private void deleteButton_Click(object sender, EventArgs e)
+        {
+            if (deletePolygon.Checked && selectedId != null)
+            {
+                int selected = (int)selectedId;
+                selectedId = null;
+                polygons.RemoveAt(selected);
+                //listView.Items.RemoveAt(selected);
+                
+                pictureBox.Invalidate();
+            }
         }
 
 

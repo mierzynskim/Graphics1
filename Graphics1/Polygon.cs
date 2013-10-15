@@ -12,6 +12,13 @@ namespace Graphics1
     public class Polygon
     {
         private List<Point> _points;
+        private bool isSelected = false;
+
+        public bool IsSelected
+        {
+            get { return isSelected; }
+            set { isSelected = value; }
+        }
 
         public List<Point> Points
         {
@@ -21,6 +28,8 @@ namespace Graphics1
 
         private int _thickness;
 
+        public bool IsFinished { get; set; }
+
         public int Thickness
         {
             get { return _thickness; }
@@ -29,7 +38,6 @@ namespace Graphics1
 
         private void Bresenham(Point startPoint, Point endPoint, Size pictureBox, Graphics graphics)
         {
-
             using (Bitmap bitmap = new Bitmap(pictureBox.Width, pictureBox.Height))
             {
                 int xi = 0, yi = 0, dx = 0, dy = 0, d;
@@ -63,7 +71,6 @@ namespace Graphics1
 
                 if (dx > dy)
                 {
-                    //Debug.WriteLine("xi: {0} yi: {1} number {2} dx > dy", xi, yi, pointsClicked);
                     int incr1 = 2 * dy;
                     int incr2 = 2 * (dy - dx);
                     d = incr1 - dx;
@@ -81,15 +88,10 @@ namespace Graphics1
                             currentPoint.X += xi;
                         }
                         bitmap.SetPixel(currentPoint.X, currentPoint.Y, Color.Black);
-
-
                     }
-
-
                 }
                 else
                 {
-                    //Debug.WriteLine("xi: {0} yi: {1} number {2} dx <= dy", xi, yi, pointsClicked);
                     int incr1 = 2 * dx;
                     int incr2 = 2 * (dx - dy);
                     d = incr1 - dy;
@@ -113,12 +115,10 @@ namespace Graphics1
 
                 graphics.DrawImage(bitmap, 0, 0, bitmap.Width, bitmap.Height);
             }
-            //graphics.Dispose();
         }
 
         public void Draw(Size pictureBox, Graphics e)
         {
-
             for (int i = 0; i < Points.Count - 1; i++)
             {
                 Bresenham(Points[i], Points[i + 1], pictureBox, e);
