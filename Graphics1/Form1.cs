@@ -20,6 +20,10 @@ namespace Graphics1
         private int currentPolygon;
         private int? selectedId = null;
 
+        private bool dragging;
+        private Point pointClicked;
+        private Point polyPointClicked;
+
         public List<Polygon> Polygons
         {
             get { return polygons; }
@@ -52,10 +56,10 @@ namespace Graphics1
                 pointsClicked++;
                 
             }
-            else
-            {
-                polygons[(int)selectedId].Points.Add(pictureLocation);
-            }
+            //else
+            //{
+            //    polygons[(int)selectedId].Points.Add(pictureLocation);
+            //}
 
             pictureBox.Invalidate();
         }
@@ -105,28 +109,6 @@ namespace Graphics1
             }
         }
 
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-            //if (polygons.Count != 0)
-            //{
-            //    using (Graphics g = pictureBox.CreateGraphics())
-            //    {
-            //        foreach (var poly in polygons)
-            //        {
-            //            foreach (var point in poly.Points)
-            //            {
-            //                DrawPoint(point, g);
-
-            //            }
-            //            if (IsEdit)
-            //                poly.Draw(pictureBox.Size, g);
-            //        }
-            //    }
-
-            //}
-        }
-
         private void listView_SelectedIndexChanged(object sender, EventArgs e)
         {
 
@@ -158,6 +140,64 @@ namespace Graphics1
         }
 
 
+        private void pictureBox_MouseUp(object sender, MouseEventArgs e)
+        {
+            dragging = false;
+        }
+
+        private void pictureBox_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (dragging)
+            {
+                Point pointMoveTo = new Point(polyPointClicked.X + e.X, polyPointClicked.Y + e.Y);
+                pointMoveTo.Offset(-pointClicked.X, -pointClicked.Y);
+
+                foreach (var poly in polygons)
+                {
+                    for (int i = 0; i < poly.Points.Count; i++)
+                    {
+                        if (polyPointClicked == poly.Points[i])
+                        {
+                            poly.Points[i] = new Point(pointMoveTo.X, pointMoveTo.Y);
+                            polyPointClicked = new Point(pointMoveTo.X, pointMoveTo.Y);
+                            pointClicked = new Point(pointMoveTo.X, pointMoveTo.Y);
+                            break;
+                        }
+                    }
+
+                }
+                pictureBox.Invalidate();
+            }
+        }
+
+        private bool IsPolyPointClicked(Point circle, Point p)
+        {
+            return (p.X - circle.X) * (p.X - circle.X) + (p.Y - circle.Y) * (p.Y - circle.Y) <= 10;
+        }
+
+
+        private void pictureBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            bool isPolyPointClicked = false;
+            pointClicked = new Point(e.X, e.Y);
+            foreach (var poly in polygons)
+            {
+                foreach (var point in poly.Points)
+                {
+                    if (IsPolyPointClicked(point, pointClicked))
+                    {
+                        isPolyPointClicked = true;
+                        polyPointClicked = point;
+                    }
+
+                }
+
+            }
+
+            if (movePoint.Checked && e.Button == MouseButtons.Left && isPolyPointClicked)
+                dragging = true;
+
+        }
 
 
 
