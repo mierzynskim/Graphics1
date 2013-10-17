@@ -16,13 +16,16 @@ namespace Graphics1
     {
         private Point pictureLocation;
         private List<Polygon> polygons = new List<Polygon>();
-        private int pointsClicked;
+        private int pointsClickedCounter;
         private int currentPolygon;
         private int? selectedId = null;
 
-        private bool dragging;
+        private bool draggingPoint;
         private Point pointClicked;
         private Point polyPointClicked;
+
+        private bool draggingPolygon;
+        private Polygon selectedPolygon;
 
         public List<Polygon> Polygons
         {
@@ -45,7 +48,7 @@ namespace Graphics1
             if (newPolygon.Checked)
             {
 
-                if (pointsClicked == 0)
+                if (pointsClickedCounter == 0)
                 {
                     polygons.Add(new Polygon());
                     polygons.Last().Points = new List<Point>();
@@ -54,31 +57,14 @@ namespace Graphics1
 
                 polygons.Last().Points.Add(pictureLocation);
 
-                pointsClicked++;
-                
+                pointsClickedCounter++;
+
             }
             else if (newPoint.Checked)
             {
                 polygons[(int)selectedId].Points.Add(pictureLocation);
             }
-            else if (movePolygon.Checked)
-            {
-                foreach (var poly in polygons)
-                {
-                    foreach (var point in poly.Points)
-                    {
-                        if (IsPointInside(poly.Points, pictureLocation))
-                        {
-                            poly.IsSelected = true;
-                        }
-                        else
-                        {
-                        }
 
-                    }
-
-                }
-            }
 
             pictureBox.Invalidate();
         }
@@ -104,7 +90,7 @@ namespace Graphics1
 
         private void PictureBoxMouseMove(object sender, MouseEventArgs e)
         {
-            if (dragging)
+            if (draggingPoint)
             {
                 Point pointMoveTo = new Point(polyPointClicked.X + e.X, polyPointClicked.Y + e.Y);
                 pointMoveTo.Offset(-pointClicked.X, -pointClicked.Y);
@@ -125,33 +111,70 @@ namespace Graphics1
                 }
                 pictureBox.Invalidate();
             }
+            else if (draggingPolygon)
+            {
+                for (int i = 0; i < selectedPolygon.Points.Count; i++)
+                {
+                    Point pointMoveTo = new Point(selectedPolygon.Points[i].X + e.X, selectedPolygon.Points[i].Y + e.Y);
+                    pointMoveTo.Offset(-pointClicked.X, -pointClicked.Y);
+                    selectedPolygon.Points[i] = new Point(pointMoveTo.X, pointMoveTo.Y);
+                }
+                pointClicked = new Point(e.X, e.Y);
+                pictureBox.Invalidate();
+            }
         }
 
         private void PictureBoxMouseUp(object sender, MouseEventArgs e)
         {
-            dragging = false;
+            draggingPoint = false;
+            draggingPolygon = false;
+            this.Cursor = Cursors.Default;
+            if (selectedPolygon != null)
+                selectedPolygon.IsSelected = false;
         }
 
         private void PictureBoxMouseDown(object sender, MouseEventArgs e)
         {
-            bool isPolyPointClicked = false;
             pointClicked = new Point(e.X, e.Y);
-            foreach (var poly in polygons)
+            if (movePoint.Checked)
             {
-                foreach (var point in poly.Points)
+                bool isPolyPointClicked = false;
+                foreach (var poly in polygons)
                 {
-                    if (IsPolyPointClicked(point, pointClicked))
+                    foreach (var point in poly.Points)
                     {
-                        isPolyPointClicked = true;
-                        polyPointClicked = point;
+                        if (IsPolyPointClicked(point, pointClicked))
+                        {
+                            isPolyPointClicked = true;
+                            polyPointClicked = point;
+                        }
+
                     }
 
                 }
 
+                if (e.Button == MouseButtons.Left && isPolyPointClicked)
+                    draggingPoint = true;
             }
-
-            if (movePoint.Checked && e.Button == MouseButtons.Left && isPolyPointClicked)
-                dragging = true;
+            else if (movePolygon.Checked)
+            {
+                bool isInsidePoly = false;
+                this.Cursor = Cursors.NoMove2D;
+                foreach (var poly in polygons)
+                {
+                    foreach (var point in poly.Points)
+                    {
+                        if (IsPointInside(poly.Points, pointClicked))
+                        {
+                            poly.IsSelected = true;
+                            isInsidePoly = true;
+                            selectedPolygon = poly;
+                        }
+                    }
+                }
+                if (e.Button == MouseButtons.Left && isInsidePoly)
+                    draggingPolygon = true;
+            }
 
         }
         #endregion
@@ -161,15 +184,15 @@ namespace Graphics1
 
             foreach (ListViewItem i in listView.Items)
             {
-                if (i.Selected) 
+                if (i.Selected)
                 {
                     if (selectedId != null)
                         polygons[(int)selectedId].IsSelected = false;
                     selectedId = i.Index;
-                    polygons[(int)selectedId].IsSelected = true; 
+                    polygons[(int)selectedId].IsSelected = true;
                 }
             }
-            
+
             pictureBox.Invalidate();
         }
 
@@ -185,8 +208,8 @@ namespace Graphics1
         {
             if (newPolygon.Checked)
             {
-                listView.Items.Add(String.Format("Wielokąt nr {0} o {1} wierzchołkach", currentPolygon + 1, pointsClicked));
-                pointsClicked = 0;
+                listView.Items.Add(String.Format("Wielokąt nr {0} o {1} wierzchołkach", currentPolygon + 1, pointsClickedCounter));
+                pointsClickedCounter = 0;
                 polygons.Last().IsFinished = true;
                 pictureBox.Invalidate();
                 currentPolygon++;
@@ -194,7 +217,7 @@ namespace Graphics1
             }
             else
             {
-                
+
             }
         }
 
@@ -206,7 +229,7 @@ namespace Graphics1
                 selectedId = null;
                 polygons.RemoveAt(selected);
                 //listView.Items.RemoveAt(selected);
-                
+
                 pictureBox.Invalidate();
             }
         }
@@ -219,7 +242,7 @@ namespace Graphics1
         private bool IsPointInside(List<Point> poly, Point p)
         {
             int k, j = poly.Count - 1;
-            bool oddNodes = false; 
+            bool oddNodes = false;
             for (k = 0; k < poly.Count; k++)
             {
                 Point polyK = poly[k];
@@ -227,7 +250,7 @@ namespace Graphics1
 
                 if (((polyK.Y > p.Y) != (polyJ.Y > p.Y)) &&
                  (p.X < (polyJ.X - polyK.X) * (p.Y - polyK.Y) / (polyJ.Y - polyK.Y) + polyK.X))
-                    oddNodes = !oddNodes; 
+                    oddNodes = !oddNodes;
                 j = k;
             }
 
