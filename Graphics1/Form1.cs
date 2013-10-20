@@ -154,7 +154,10 @@ namespace Graphics1
             draggingPolygon = false;
             this.Cursor = Cursors.Default;
             if (selectedPolygon != null && movePolygon.Checked)
+            {
                 selectedPolygon.IsSelected = false;
+                selectedPolygon = null;
+            }
         }
 
         private void PictureBoxMouseDown(object sender, MouseEventArgs e)
@@ -261,6 +264,10 @@ namespace Graphics1
                 selectedPolygon = null;
                 pictureBox.Invalidate();
             }
+            else
+            {
+                MessageBox.Show("Zaznacz wielokąt do usunięcia");
+            }
         }
 
         private void ChangeColorClick(object sender, EventArgs e)
@@ -280,7 +287,7 @@ namespace Graphics1
             pictureBox.Invalidate();
         }
 
-        private void thicknessBar_Scroll(object sender, EventArgs e)
+        private void ThicknessBarScroll(object sender, EventArgs e)
         {
             try
             {
@@ -294,9 +301,6 @@ namespace Graphics1
             }
 
         }
-
-
-
 
     }
 }

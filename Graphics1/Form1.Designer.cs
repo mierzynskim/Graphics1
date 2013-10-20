@@ -31,6 +31,8 @@
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.addButton = new System.Windows.Forms.Button();
             this.groupBox = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.thicknessBar = new System.Windows.Forms.TrackBar();
             this.changeColor = new System.Windows.Forms.Button();
             this.markPoly = new System.Windows.Forms.RadioButton();
             this.deleteButton = new System.Windows.Forms.Button();
@@ -40,15 +42,13 @@
             this.newPoint = new System.Windows.Forms.RadioButton();
             this.deletePoint = new System.Windows.Forms.RadioButton();
             this.newPolygon = new System.Windows.Forms.RadioButton();
-            this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
-            this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.lineShape4 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.thicknessBar = new System.Windows.Forms.TrackBar();
-            this.label1 = new System.Windows.Forms.Label();
             this.lineShape5 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.lineShape4 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.colorDialog = new System.Windows.Forms.ColorDialog();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.groupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.thicknessBar)).BeginInit();
@@ -73,11 +73,11 @@
             // 
             // addButton
             // 
-            this.addButton.Location = new System.Drawing.Point(118, 58);
+            this.addButton.Location = new System.Drawing.Point(7, 45);
             this.addButton.Name = "addButton";
-            this.addButton.Size = new System.Drawing.Size(75, 23);
+            this.addButton.Size = new System.Drawing.Size(92, 23);
             this.addButton.TabIndex = 1;
-            this.addButton.Text = "Dodaj";
+            this.addButton.Text = "Dodaj wielokąt";
             this.addButton.UseVisualStyleBackColor = true;
             this.addButton.Click += new System.EventHandler(this.AddButtonClick);
             // 
@@ -103,9 +103,29 @@
             this.groupBox.TabStop = false;
             this.groupBox.Text = "Menu";
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(951, 22);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(64, 13);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Grubość linii";
+            // 
+            // thicknessBar
+            // 
+            this.thicknessBar.Location = new System.Drawing.Point(945, 45);
+            this.thicknessBar.Maximum = 3;
+            this.thicknessBar.Minimum = 1;
+            this.thicknessBar.Name = "thicknessBar";
+            this.thicknessBar.Size = new System.Drawing.Size(154, 45);
+            this.thicknessBar.TabIndex = 7;
+            this.thicknessBar.Value = 1;
+            this.thicknessBar.Scroll += new System.EventHandler(this.ThicknessBarScroll);
+            // 
             // changeColor
             // 
-            this.changeColor.Location = new System.Drawing.Point(841, 20);
+            this.changeColor.Location = new System.Drawing.Point(835, 19);
             this.changeColor.Name = "changeColor";
             this.changeColor.Size = new System.Drawing.Size(75, 23);
             this.changeColor.TabIndex = 5;
@@ -126,11 +146,11 @@
             // 
             // deleteButton
             // 
-            this.deleteButton.Location = new System.Drawing.Point(340, 58);
+            this.deleteButton.Location = new System.Drawing.Point(233, 41);
             this.deleteButton.Name = "deleteButton";
-            this.deleteButton.Size = new System.Drawing.Size(75, 23);
+            this.deleteButton.Size = new System.Drawing.Size(84, 23);
             this.deleteButton.TabIndex = 1;
-            this.deleteButton.Text = "Usuń";
+            this.deleteButton.Text = "Usuń wielokąt";
             this.deleteButton.UseVisualStyleBackColor = true;
             this.deleteButton.Click += new System.EventHandler(this.DeleteButtonClick);
             // 
@@ -148,7 +168,7 @@
             // deletePolygon
             // 
             this.deletePolygon.AutoSize = true;
-            this.deletePolygon.Location = new System.Drawing.Point(323, 20);
+            this.deletePolygon.Location = new System.Drawing.Point(233, 18);
             this.deletePolygon.Name = "deletePolygon";
             this.deletePolygon.Size = new System.Drawing.Size(92, 17);
             this.deletePolygon.TabIndex = 3;
@@ -170,7 +190,7 @@
             // newPoint
             // 
             this.newPoint.AutoSize = true;
-            this.newPoint.Location = new System.Drawing.Point(98, 19);
+            this.newPoint.Location = new System.Drawing.Point(107, 23);
             this.newPoint.Name = "newPoint";
             this.newPoint.Size = new System.Drawing.Size(82, 17);
             this.newPoint.TabIndex = 3;
@@ -181,7 +201,7 @@
             // deletePoint
             // 
             this.deletePoint.AutoSize = true;
-            this.deletePoint.Location = new System.Drawing.Point(226, 20);
+            this.deletePoint.Location = new System.Drawing.Point(331, 20);
             this.deletePoint.Name = "deletePoint";
             this.deletePoint.Size = new System.Drawing.Size(80, 17);
             this.deletePoint.TabIndex = 2;
@@ -216,29 +236,13 @@
             this.shapeContainer1.TabIndex = 6;
             this.shapeContainer1.TabStop = false;
             // 
-            // lineShape1
+            // lineShape5
             // 
-            this.lineShape1.Name = "lineShape1";
-            this.lineShape1.X1 = 441;
-            this.lineShape1.X2 = 441;
-            this.lineShape1.Y1 = -11;
-            this.lineShape1.Y2 = 72;
-            // 
-            // lineShape2
-            // 
-            this.lineShape2.Name = "lineShape2";
-            this.lineShape2.X1 = 206;
-            this.lineShape2.X2 = 206;
-            this.lineShape2.Y1 = -9;
-            this.lineShape2.Y2 = 74;
-            // 
-            // lineShape3
-            // 
-            this.lineShape3.Name = "lineShape3";
-            this.lineShape3.X1 = 679;
-            this.lineShape3.X2 = 679;
-            this.lineShape3.Y1 = -5;
-            this.lineShape3.Y2 = 78;
+            this.lineShape5.Name = "lineShape5";
+            this.lineShape5.X1 = 927;
+            this.lineShape5.X2 = 927;
+            this.lineShape5.Y1 = -8;
+            this.lineShape5.Y2 = 75;
             // 
             // lineShape4
             // 
@@ -248,33 +252,29 @@
             this.lineShape4.Y1 = -13;
             this.lineShape4.Y2 = 70;
             // 
-            // thicknessBar
+            // lineShape3
             // 
-            this.thicknessBar.Location = new System.Drawing.Point(945, 45);
-            this.thicknessBar.Maximum = 3;
-            this.thicknessBar.Minimum = 1;
-            this.thicknessBar.Name = "thicknessBar";
-            this.thicknessBar.Size = new System.Drawing.Size(154, 45);
-            this.thicknessBar.TabIndex = 7;
-            this.thicknessBar.Value = 1;
-            this.thicknessBar.Scroll += new System.EventHandler(this.thicknessBar_Scroll);
+            this.lineShape3.Name = "lineShape3";
+            this.lineShape3.X1 = 679;
+            this.lineShape3.X2 = 679;
+            this.lineShape3.Y1 = -5;
+            this.lineShape3.Y2 = 78;
             // 
-            // label1
+            // lineShape2
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(951, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(64, 13);
-            this.label1.TabIndex = 8;
-            this.label1.Text = "Grubość linii";
+            this.lineShape2.Name = "lineShape2";
+            this.lineShape2.X1 = 206;
+            this.lineShape2.X2 = 206;
+            this.lineShape2.Y1 = -9;
+            this.lineShape2.Y2 = 74;
             // 
-            // lineShape5
+            // lineShape1
             // 
-            this.lineShape5.Name = "lineShape5";
-            this.lineShape5.X1 = 927;
-            this.lineShape5.X2 = 927;
-            this.lineShape5.Y1 = -8;
-            this.lineShape5.Y2 = 75;
+            this.lineShape1.Name = "lineShape1";
+            this.lineShape1.X1 = 441;
+            this.lineShape1.X2 = 441;
+            this.lineShape1.Y1 = -11;
+            this.lineShape1.Y2 = 72;
             // 
             // Form1
             // 
