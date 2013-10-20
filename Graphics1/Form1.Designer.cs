@@ -30,15 +30,15 @@
         {
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.addButton = new System.Windows.Forms.Button();
-            this.listView = new System.Windows.Forms.ListView();
             this.addGroupBox = new System.Windows.Forms.GroupBox();
-            this.newPoint = new System.Windows.Forms.RadioButton();
-            this.newPolygon = new System.Windows.Forms.RadioButton();
-            this.deletePolygon = new System.Windows.Forms.RadioButton();
-            this.deletePoint = new System.Windows.Forms.RadioButton();
+            this.markPoly = new System.Windows.Forms.RadioButton();
             this.deleteButton = new System.Windows.Forms.Button();
             this.movePolygon = new System.Windows.Forms.RadioButton();
+            this.deletePolygon = new System.Windows.Forms.RadioButton();
             this.movePoint = new System.Windows.Forms.RadioButton();
+            this.newPoint = new System.Windows.Forms.RadioButton();
+            this.deletePoint = new System.Windows.Forms.RadioButton();
+            this.newPolygon = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.addGroupBox.SuspendLayout();
             this.SuspendLayout();
@@ -51,7 +51,7 @@
             this.pictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox.Location = new System.Drawing.Point(12, 105);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(1328, 624);
+            this.pictureBox.Size = new System.Drawing.Size(1320, 616);
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;
             this.pictureBox.Click += new System.EventHandler(this.PictureBoxClick);
@@ -70,17 +70,9 @@
             this.addButton.UseVisualStyleBackColor = true;
             this.addButton.Click += new System.EventHandler(this.AddButtonClick);
             // 
-            // listView
-            // 
-            this.listView.Location = new System.Drawing.Point(30, 2);
-            this.listView.Name = "listView";
-            this.listView.Size = new System.Drawing.Size(242, 97);
-            this.listView.TabIndex = 3;
-            this.listView.UseCompatibleStateImageBehavior = false;
-            this.listView.SelectedIndexChanged += new System.EventHandler(this.listView_SelectedIndexChanged);
-            // 
             // addGroupBox
             // 
+            this.addGroupBox.Controls.Add(this.markPoly);
             this.addGroupBox.Controls.Add(this.deleteButton);
             this.addGroupBox.Controls.Add(this.movePolygon);
             this.addGroupBox.Controls.Add(this.deletePolygon);
@@ -96,6 +88,60 @@
             this.addGroupBox.TabStop = false;
             this.addGroupBox.Text = "Dodawanie";
             // 
+            // markPoly
+            // 
+            this.markPoly.AutoSize = true;
+            this.markPoly.Location = new System.Drawing.Point(690, 20);
+            this.markPoly.Name = "markPoly";
+            this.markPoly.Size = new System.Drawing.Size(108, 17);
+            this.markPoly.TabIndex = 4;
+            this.markPoly.TabStop = true;
+            this.markPoly.Text = "Zaznacz wielokąt";
+            this.markPoly.UseVisualStyleBackColor = true;
+            // 
+            // deleteButton
+            // 
+            this.deleteButton.Location = new System.Drawing.Point(340, 64);
+            this.deleteButton.Name = "deleteButton";
+            this.deleteButton.Size = new System.Drawing.Size(75, 23);
+            this.deleteButton.TabIndex = 1;
+            this.deleteButton.Text = "Usuń";
+            this.deleteButton.UseVisualStyleBackColor = true;
+            this.deleteButton.Click += new System.EventHandler(this.DeleteButtonClick);
+            // 
+            // movePolygon
+            // 
+            this.movePolygon.AutoSize = true;
+            this.movePolygon.Location = new System.Drawing.Point(579, 20);
+            this.movePolygon.Name = "movePolygon";
+            this.movePolygon.Size = new System.Drawing.Size(105, 17);
+            this.movePolygon.TabIndex = 3;
+            this.movePolygon.TabStop = true;
+            this.movePolygon.Text = "Przesuń wielokąt";
+            this.movePolygon.UseVisualStyleBackColor = true;
+            // 
+            // deletePolygon
+            // 
+            this.deletePolygon.AutoSize = true;
+            this.deletePolygon.Location = new System.Drawing.Point(323, 20);
+            this.deletePolygon.Name = "deletePolygon";
+            this.deletePolygon.Size = new System.Drawing.Size(92, 17);
+            this.deletePolygon.TabIndex = 3;
+            this.deletePolygon.TabStop = true;
+            this.deletePolygon.Text = "Usuń wielokąt";
+            this.deletePolygon.UseVisualStyleBackColor = true;
+            // 
+            // movePoint
+            // 
+            this.movePoint.AutoSize = true;
+            this.movePoint.Location = new System.Drawing.Point(480, 19);
+            this.movePoint.Name = "movePoint";
+            this.movePoint.Size = new System.Drawing.Size(93, 17);
+            this.movePoint.TabIndex = 2;
+            this.movePoint.TabStop = true;
+            this.movePoint.Text = "Przesuń punkt";
+            this.movePoint.UseVisualStyleBackColor = true;
+            // 
             // newPoint
             // 
             this.newPoint.AutoSize = true;
@@ -106,6 +152,17 @@
             this.newPoint.TabStop = true;
             this.newPoint.Text = "Nowy punkt";
             this.newPoint.UseVisualStyleBackColor = true;
+            // 
+            // deletePoint
+            // 
+            this.deletePoint.AutoSize = true;
+            this.deletePoint.Location = new System.Drawing.Point(226, 20);
+            this.deletePoint.Name = "deletePoint";
+            this.deletePoint.Size = new System.Drawing.Size(80, 17);
+            this.deletePoint.TabIndex = 2;
+            this.deletePoint.TabStop = true;
+            this.deletePoint.Text = "Usuń punkt";
+            this.deletePoint.UseVisualStyleBackColor = true;
             // 
             // newPolygon
             // 
@@ -119,67 +176,12 @@
             this.newPolygon.Text = "Nowy wielokąt";
             this.newPolygon.UseVisualStyleBackColor = true;
             // 
-            // deletePolygon
-            // 
-            this.deletePolygon.AutoSize = true;
-            this.deletePolygon.Location = new System.Drawing.Point(345, 20);
-            this.deletePolygon.Name = "deletePolygon";
-            this.deletePolygon.Size = new System.Drawing.Size(92, 17);
-            this.deletePolygon.TabIndex = 3;
-            this.deletePolygon.TabStop = true;
-            this.deletePolygon.Text = "Usuń wielokąt";
-            this.deletePolygon.UseVisualStyleBackColor = true;
-            // 
-            // deletePoint
-            // 
-            this.deletePoint.AutoSize = true;
-            this.deletePoint.Location = new System.Drawing.Point(226, 20);
-            this.deletePoint.Name = "deletePoint";
-            this.deletePoint.Size = new System.Drawing.Size(80, 17);
-            this.deletePoint.TabIndex = 2;
-            this.deletePoint.TabStop = true;
-            this.deletePoint.Text = "Usuń punkt";
-            this.deletePoint.UseVisualStyleBackColor = true;
-            // 
-            // deleteButton
-            // 
-            this.deleteButton.Location = new System.Drawing.Point(362, 64);
-            this.deleteButton.Name = "deleteButton";
-            this.deleteButton.Size = new System.Drawing.Size(75, 23);
-            this.deleteButton.TabIndex = 1;
-            this.deleteButton.Text = "Usuń";
-            this.deleteButton.UseVisualStyleBackColor = true;
-            this.deleteButton.Click += new System.EventHandler(this.DeleteButtonClick);
-            // 
-            // movePolygon
-            // 
-            this.movePolygon.AutoSize = true;
-            this.movePolygon.Location = new System.Drawing.Point(603, 20);
-            this.movePolygon.Name = "movePolygon";
-            this.movePolygon.Size = new System.Drawing.Size(105, 17);
-            this.movePolygon.TabIndex = 3;
-            this.movePolygon.TabStop = true;
-            this.movePolygon.Text = "Przesuń wielokąt";
-            this.movePolygon.UseVisualStyleBackColor = true;
-            // 
-            // movePoint
-            // 
-            this.movePoint.AutoSize = true;
-            this.movePoint.Location = new System.Drawing.Point(495, 20);
-            this.movePoint.Name = "movePoint";
-            this.movePoint.Size = new System.Drawing.Size(93, 17);
-            this.movePoint.TabIndex = 2;
-            this.movePoint.TabStop = true;
-            this.movePoint.Text = "Przesuń punkt";
-            this.movePoint.UseVisualStyleBackColor = true;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1362, 741);
+            this.ClientSize = new System.Drawing.Size(1354, 733);
             this.Controls.Add(this.addGroupBox);
-            this.Controls.Add(this.listView);
             this.Controls.Add(this.pictureBox);
             this.DoubleBuffered = true;
             this.MaximizeBox = false;
@@ -197,7 +199,6 @@
 
         private System.Windows.Forms.PictureBox pictureBox;
         private System.Windows.Forms.Button addButton;
-        private System.Windows.Forms.ListView listView;
         private System.Windows.Forms.GroupBox addGroupBox;
         private System.Windows.Forms.RadioButton newPoint;
         private System.Windows.Forms.RadioButton newPolygon;
@@ -206,6 +207,7 @@
         private System.Windows.Forms.Button deleteButton;
         private System.Windows.Forms.RadioButton movePolygon;
         private System.Windows.Forms.RadioButton movePoint;
+        private System.Windows.Forms.RadioButton markPoly;
     }
 }
 

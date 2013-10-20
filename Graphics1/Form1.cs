@@ -18,21 +18,19 @@ namespace Graphics1
         private List<Polygon> polygons = new List<Polygon>();
         private int pointsClickedCounter;
         private int currentPolygon;
-        private int? selectedId = null;
 
         private bool draggingPoint;
         private Point pointClicked;
         private Point polyPointClicked;
 
         private bool draggingPolygon;
-        private Polygon selectedPolygon;
+        private Polygon selectedPolygon = null;
 
         public List<Polygon> Polygons
         {
             get { return polygons; }
             set { polygons = value; }
         }
-
 
         public Form1()
         {
@@ -47,25 +45,34 @@ namespace Graphics1
 
             if (newPolygon.Checked)
             {
-
                 if (pointsClickedCounter == 0)
                 {
                     polygons.Add(new Polygon());
                     polygons.Last().Points = new List<Point>();
                     polygons.Last().IsFinished = false;
                 }
-
                 polygons.Last().Points.Add(pictureLocation);
-
                 pointsClickedCounter++;
-
             }
             else if (newPoint.Checked)
             {
-                polygons[(int)selectedId].Points.Add(pictureLocation);
+                selectedPolygon.Points.Add(pictureLocation);
+                selectedPolygon.Points = MyGeometry.ConvexHull(selectedPolygon.Points);
             }
-
-
+            else if (markPoly.Checked)
+            {
+                foreach (var poly in polygons)
+                {
+                    if (MyGeometry.IsPointInside(poly.Points, pictureLocation))
+                    {
+                        if (selectedPolygon != null)
+                            selectedPolygon.IsSelected = false;
+                        poly.IsSelected = true;
+                        selectedPolygon = poly;
+                        break;
+                    }
+                }
+            }
             pictureBox.Invalidate();
         }
 
@@ -74,7 +81,6 @@ namespace Graphics1
             if (polygons.Count != 0)
             {
                 Graphics g = e.Graphics;
-
                 foreach (var poly in polygons)
                 {
                     foreach (var point in poly.Points)
@@ -94,7 +100,6 @@ namespace Graphics1
             {
                 Point pointMoveTo = new Point(polyPointClicked.X + e.X, polyPointClicked.Y + e.Y);
                 pointMoveTo.Offset(-pointClicked.X, -pointClicked.Y);
-
                 foreach (var poly in polygons)
                 {
                     for (int i = 0; i < poly.Points.Count; i++)
@@ -107,7 +112,6 @@ namespace Graphics1
                             break;
                         }
                     }
-
                 }
                 pictureBox.Invalidate();
             }
@@ -129,7 +133,7 @@ namespace Graphics1
             draggingPoint = false;
             draggingPolygon = false;
             this.Cursor = Cursors.Default;
-            if (selectedPolygon != null)
+            if (selectedPolygon != null && movePolygon.Checked)
                 selectedPolygon.IsSelected = false;
         }
 
@@ -143,14 +147,13 @@ namespace Graphics1
                 {
                     foreach (var point in poly.Points)
                     {
-                        if (IsPolyPointClicked(point, pointClicked))
+                        if (MyGeometry.IsPolyPointClicked(point, pointClicked))
                         {
                             isPolyPointClicked = true;
                             polyPointClicked = point;
                         }
 
                     }
-
                 }
 
                 if (e.Button == MouseButtons.Left && isPolyPointClicked)
@@ -164,7 +167,7 @@ namespace Graphics1
                 {
                     foreach (var point in poly.Points)
                     {
-                        if (IsPointInside(poly.Points, pointClicked))
+                        if (MyGeometry.IsPointInside(poly.Points, pointClicked))
                         {
                             poly.IsSelected = true;
                             isInsidePoly = true;
@@ -175,26 +178,33 @@ namespace Graphics1
                 if (e.Button == MouseButtons.Left && isInsidePoly)
                     draggingPolygon = true;
             }
+            else if (deletePoint.Checked)
+            {
+                bool isDeleted = false;
+                foreach (var poly in polygons)
+                {
+                    foreach (var point in poly.Points)
+                    {
+                        if (MyGeometry.IsPolyPointClicked(point, pointClicked))
+                        {
+                            poly.Points.Remove(point);
+                            if (poly.Points.Count == 0)
+                                Polygons.Remove(poly);
+                            pictureBox.Invalidate();
+                            isDeleted = true;
+                            break;
+                        }
+
+                    }
+                    if (isDeleted)
+                        break;
+
+                }
+
+            }
 
         }
         #endregion
-
-        private void listView_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-            foreach (ListViewItem i in listView.Items)
-            {
-                if (i.Selected)
-                {
-                    if (selectedId != null)
-                        polygons[(int)selectedId].IsSelected = false;
-                    selectedId = i.Index;
-                    polygons[(int)selectedId].IsSelected = true;
-                }
-            }
-
-            pictureBox.Invalidate();
-        }
 
         private void DrawPoint(Point location, Graphics graphics, Color color)
         {
@@ -208,56 +218,24 @@ namespace Graphics1
         {
             if (newPolygon.Checked)
             {
-                listView.Items.Add(String.Format("Wielokąt nr {0} o {1} wierzchołkach", currentPolygon + 1, pointsClickedCounter));
                 pointsClickedCounter = 0;
                 polygons.Last().IsFinished = true;
+                polygons.Last().Points = MyGeometry.ConvexHull(polygons.Last().Points);
                 pictureBox.Invalidate();
                 currentPolygon++;
-
-            }
-            else
-            {
 
             }
         }
 
         private void DeleteButtonClick(object sender, EventArgs e)
         {
-            if (deletePolygon.Checked && selectedId != null)
+            if (deletePolygon.Checked && selectedPolygon != null)
             {
-                int selected = (int)selectedId;
-                selectedId = null;
-                polygons.RemoveAt(selected);
-                //listView.Items.RemoveAt(selected);
-
+                polygons.Remove(selectedPolygon);
+                selectedPolygon = null;
                 pictureBox.Invalidate();
             }
         }
-
-        private bool IsPolyPointClicked(Point circle, Point p)
-        {
-            return (p.X - circle.X) * (p.X - circle.X) + (p.Y - circle.Y) * (p.Y - circle.Y) <= 10;
-        }
-
-        private bool IsPointInside(List<Point> poly, Point p)
-        {
-            int k, j = poly.Count - 1;
-            bool oddNodes = false;
-            for (k = 0; k < poly.Count; k++)
-            {
-                Point polyK = poly[k];
-                Point polyJ = poly[j];
-
-                if (((polyK.Y > p.Y) != (polyJ.Y > p.Y)) &&
-                 (p.X < (polyJ.X - polyK.X) * (p.Y - polyK.Y) / (polyJ.Y - polyK.Y) + polyK.X))
-                    oddNodes = !oddNodes;
-                j = k;
-            }
-
-            return oddNodes;
-        }
-
-
 
 
 
