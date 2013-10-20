@@ -26,15 +26,22 @@ namespace Graphics1
         private bool draggingPolygon;
         private Polygon selectedPolygon = null;
 
-        public List<Polygon> Polygons
-        {
-            get { return polygons; }
-            set { polygons = value; }
-        }
-
         public Form1()
         {
             InitializeComponent();
+        }
+
+        private bool ValidatePoints(ref Point p, Size size)
+        {
+            int x = p.X, y = p.Y;
+            bool change = false;
+            if (x < 0) x = 0;
+            if (y < 0) y = 0;
+            if (x > size.Width - 5) x = size.Width - 1;
+            if (y > size.Height - 5) y = size.Height - 1;
+            if (x != p.X || y != p.Y) change = true;
+            p = new Point(x, y);
+            return change;
         }
 
         #region Picture Box events
@@ -56,8 +63,15 @@ namespace Graphics1
             }
             else if (newPoint.Checked)
             {
-                selectedPolygon.Points.Add(pictureLocation);
-                selectedPolygon.Points = MyGeometry.ConvexHull(selectedPolygon.Points);
+                try
+                {
+                    selectedPolygon.Points.Add(pictureLocation);
+                    selectedPolygon.Points = MyGeometry.ConvexHull(selectedPolygon.Points);
+                }
+                catch
+                {
+                    MessageBox.Show("Nie wybrano wielokąta, w którym ma być dodany punkt.\nKliknij Zaznacz wielokąt lub dodaj nowy");
+                }
             }
             else if (markPoly.Checked)
             {
@@ -100,29 +114,35 @@ namespace Graphics1
             {
                 Point pointMoveTo = new Point(polyPointClicked.X + e.X, polyPointClicked.Y + e.Y);
                 pointMoveTo.Offset(-pointClicked.X, -pointClicked.Y);
-                foreach (var poly in polygons)
-                {
-                    for (int i = 0; i < poly.Points.Count; i++)
+                
+                    foreach (var poly in polygons)
                     {
-                        if (polyPointClicked == poly.Points[i])
+                        for (int i = 0; i < poly.Points.Count; i++)
                         {
-                            poly.Points[i] = new Point(pointMoveTo.X, pointMoveTo.Y);
-                            polyPointClicked = new Point(pointMoveTo.X, pointMoveTo.Y);
-                            pointClicked = new Point(pointMoveTo.X, pointMoveTo.Y);
-                            break;
+                            if (polyPointClicked == poly.Points[i])
+                            {
+                                poly.Points[i] = new Point(pointMoveTo.X, pointMoveTo.Y);
+                                polyPointClicked = new Point(pointMoveTo.X, pointMoveTo.Y);
+                                pointClicked = new Point(pointMoveTo.X, pointMoveTo.Y);
+                                break;
+                            }
                         }
                     }
-                }
+                
                 pictureBox.Invalidate();
             }
             else if (draggingPolygon)
             {
-                for (int i = 0; i < selectedPolygon.Points.Count; i++)
-                {
-                    Point pointMoveTo = new Point(selectedPolygon.Points[i].X + e.X, selectedPolygon.Points[i].Y + e.Y);
-                    pointMoveTo.Offset(-pointClicked.X, -pointClicked.Y);
-                    selectedPolygon.Points[i] = new Point(pointMoveTo.X, pointMoveTo.Y);
-                }
+                
+                    for (int i = 0; i < selectedPolygon.Points.Count; i++)
+                    {
+                        Point pointMoveTo = new Point(selectedPolygon.Points[i].X + e.X, selectedPolygon.Points[i].Y + e.Y);
+                        
+                        pointMoveTo.Offset(-pointClicked.X, -pointClicked.Y);
+                        ValidatePoints(ref pointMoveTo, pictureBox.Size);
+                        
+                        selectedPolygon.Points[i] = new Point(pointMoveTo.X, pointMoveTo.Y);
+                    }
                 pointClicked = new Point(e.X, e.Y);
                 pictureBox.Invalidate();
             }
@@ -189,7 +209,7 @@ namespace Graphics1
                         {
                             poly.Points.Remove(point);
                             if (poly.Points.Count == 0)
-                                Polygons.Remove(poly);
+                                polygons.Remove(poly);
                             pictureBox.Invalidate();
                             isDeleted = true;
                             break;
@@ -198,7 +218,6 @@ namespace Graphics1
                     }
                     if (isDeleted)
                         break;
-
                 }
 
             }
@@ -218,11 +237,18 @@ namespace Graphics1
         {
             if (newPolygon.Checked)
             {
-                pointsClickedCounter = 0;
-                polygons.Last().IsFinished = true;
-                polygons.Last().Points = MyGeometry.ConvexHull(polygons.Last().Points);
-                pictureBox.Invalidate();
-                currentPolygon++;
+                try
+                {
+                    pointsClickedCounter = 0;
+                    polygons.Last().IsFinished = true;
+                    polygons.Last().Points = MyGeometry.ConvexHull(polygons.Last().Points);
+                    pictureBox.Invalidate();
+                    currentPolygon++;
+                }
+                catch
+                {
+                    MessageBox.Show("Nie dodano punktów");
+                }
 
             }
         }
@@ -235,6 +261,38 @@ namespace Graphics1
                 selectedPolygon = null;
                 pictureBox.Invalidate();
             }
+        }
+
+        private void ChangeColorClick(object sender, EventArgs e)
+        {
+            ColorDialog MyDialog = new ColorDialog();
+            MyDialog.AllowFullOpen = false;
+            MyDialog.ShowHelp = true;
+            try
+            {
+                if (MyDialog.ShowDialog() == DialogResult.OK)
+                    selectedPolygon.Color = MyDialog.Color;
+            }
+            catch
+            {
+                MessageBox.Show("Nie wybrano wielokąta.\nKliknij Zaznacz wielokąt, aby zmienić kolor");
+            }
+            pictureBox.Invalidate();
+        }
+
+        private void thicknessBar_Scroll(object sender, EventArgs e)
+        {
+            try
+            {
+                selectedPolygon.Thickness = thicknessBar.Value;
+                pictureBox.Invalidate();
+            }
+            catch
+            {
+                thicknessBar.Value--;
+                MessageBox.Show("Nie wybrano wielokąta.\nKliknij Zaznacz wielokąt, aby zmienić kolor");
+            }
+
         }
 
 

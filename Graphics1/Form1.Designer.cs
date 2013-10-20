@@ -30,7 +30,8 @@
         {
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.addButton = new System.Windows.Forms.Button();
-            this.addGroupBox = new System.Windows.Forms.GroupBox();
+            this.groupBox = new System.Windows.Forms.GroupBox();
+            this.changeColor = new System.Windows.Forms.Button();
             this.markPoly = new System.Windows.Forms.RadioButton();
             this.deleteButton = new System.Windows.Forms.Button();
             this.movePolygon = new System.Windows.Forms.RadioButton();
@@ -39,8 +40,18 @@
             this.newPoint = new System.Windows.Forms.RadioButton();
             this.deletePoint = new System.Windows.Forms.RadioButton();
             this.newPolygon = new System.Windows.Forms.RadioButton();
+            this.colorDialog = new System.Windows.Forms.ColorDialog();
+            this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.lineShape4 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.thicknessBar = new System.Windows.Forms.TrackBar();
+            this.label1 = new System.Windows.Forms.Label();
+            this.lineShape5 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
-            this.addGroupBox.SuspendLayout();
+            this.groupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.thicknessBar)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBox
@@ -70,23 +81,37 @@
             this.addButton.UseVisualStyleBackColor = true;
             this.addButton.Click += new System.EventHandler(this.AddButtonClick);
             // 
-            // addGroupBox
+            // groupBox
             // 
-            this.addGroupBox.Controls.Add(this.markPoly);
-            this.addGroupBox.Controls.Add(this.deleteButton);
-            this.addGroupBox.Controls.Add(this.movePolygon);
-            this.addGroupBox.Controls.Add(this.deletePolygon);
-            this.addGroupBox.Controls.Add(this.movePoint);
-            this.addGroupBox.Controls.Add(this.newPoint);
-            this.addGroupBox.Controls.Add(this.deletePoint);
-            this.addGroupBox.Controls.Add(this.newPolygon);
-            this.addGroupBox.Controls.Add(this.addButton);
-            this.addGroupBox.Location = new System.Drawing.Point(296, 12);
-            this.addGroupBox.Name = "addGroupBox";
-            this.addGroupBox.Size = new System.Drawing.Size(818, 87);
-            this.addGroupBox.TabIndex = 4;
-            this.addGroupBox.TabStop = false;
-            this.addGroupBox.Text = "Dodawanie";
+            this.groupBox.Controls.Add(this.label1);
+            this.groupBox.Controls.Add(this.thicknessBar);
+            this.groupBox.Controls.Add(this.changeColor);
+            this.groupBox.Controls.Add(this.markPoly);
+            this.groupBox.Controls.Add(this.deleteButton);
+            this.groupBox.Controls.Add(this.movePolygon);
+            this.groupBox.Controls.Add(this.deletePolygon);
+            this.groupBox.Controls.Add(this.movePoint);
+            this.groupBox.Controls.Add(this.newPoint);
+            this.groupBox.Controls.Add(this.deletePoint);
+            this.groupBox.Controls.Add(this.newPolygon);
+            this.groupBox.Controls.Add(this.addButton);
+            this.groupBox.Controls.Add(this.shapeContainer1);
+            this.groupBox.Location = new System.Drawing.Point(93, 12);
+            this.groupBox.Name = "groupBox";
+            this.groupBox.Size = new System.Drawing.Size(1121, 87);
+            this.groupBox.TabIndex = 4;
+            this.groupBox.TabStop = false;
+            this.groupBox.Text = "Menu";
+            // 
+            // changeColor
+            // 
+            this.changeColor.Location = new System.Drawing.Point(841, 20);
+            this.changeColor.Name = "changeColor";
+            this.changeColor.Size = new System.Drawing.Size(75, 23);
+            this.changeColor.TabIndex = 5;
+            this.changeColor.Text = "Zmień kolor";
+            this.changeColor.UseVisualStyleBackColor = true;
+            this.changeColor.Click += new System.EventHandler(this.ChangeColorClick);
             // 
             // markPoly
             // 
@@ -101,7 +126,7 @@
             // 
             // deleteButton
             // 
-            this.deleteButton.Location = new System.Drawing.Point(340, 64);
+            this.deleteButton.Location = new System.Drawing.Point(340, 58);
             this.deleteButton.Name = "deleteButton";
             this.deleteButton.Size = new System.Drawing.Size(75, 23);
             this.deleteButton.TabIndex = 1;
@@ -112,7 +137,7 @@
             // movePolygon
             // 
             this.movePolygon.AutoSize = true;
-            this.movePolygon.Location = new System.Drawing.Point(579, 20);
+            this.movePolygon.Location = new System.Drawing.Point(557, 20);
             this.movePolygon.Name = "movePolygon";
             this.movePolygon.Size = new System.Drawing.Size(105, 17);
             this.movePolygon.TabIndex = 3;
@@ -134,7 +159,7 @@
             // movePoint
             // 
             this.movePoint.AutoSize = true;
-            this.movePoint.Location = new System.Drawing.Point(480, 19);
+            this.movePoint.Location = new System.Drawing.Point(458, 19);
             this.movePoint.Name = "movePoint";
             this.movePoint.Size = new System.Drawing.Size(93, 17);
             this.movePoint.TabIndex = 2;
@@ -176,21 +201,97 @@
             this.newPolygon.Text = "Nowy wielokąt";
             this.newPolygon.UseVisualStyleBackColor = true;
             // 
+            // shapeContainer1
+            // 
+            this.shapeContainer1.Location = new System.Drawing.Point(3, 16);
+            this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer1.Name = "shapeContainer1";
+            this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
+            this.lineShape5,
+            this.lineShape4,
+            this.lineShape3,
+            this.lineShape2,
+            this.lineShape1});
+            this.shapeContainer1.Size = new System.Drawing.Size(1115, 68);
+            this.shapeContainer1.TabIndex = 6;
+            this.shapeContainer1.TabStop = false;
+            // 
+            // lineShape1
+            // 
+            this.lineShape1.Name = "lineShape1";
+            this.lineShape1.X1 = 441;
+            this.lineShape1.X2 = 441;
+            this.lineShape1.Y1 = -11;
+            this.lineShape1.Y2 = 72;
+            // 
+            // lineShape2
+            // 
+            this.lineShape2.Name = "lineShape2";
+            this.lineShape2.X1 = 206;
+            this.lineShape2.X2 = 206;
+            this.lineShape2.Y1 = -9;
+            this.lineShape2.Y2 = 74;
+            // 
+            // lineShape3
+            // 
+            this.lineShape3.Name = "lineShape3";
+            this.lineShape3.X1 = 679;
+            this.lineShape3.X2 = 679;
+            this.lineShape3.Y1 = -5;
+            this.lineShape3.Y2 = 78;
+            // 
+            // lineShape4
+            // 
+            this.lineShape4.Name = "lineShape4";
+            this.lineShape4.X1 = 818;
+            this.lineShape4.X2 = 818;
+            this.lineShape4.Y1 = -13;
+            this.lineShape4.Y2 = 70;
+            // 
+            // thicknessBar
+            // 
+            this.thicknessBar.Location = new System.Drawing.Point(945, 45);
+            this.thicknessBar.Maximum = 3;
+            this.thicknessBar.Minimum = 1;
+            this.thicknessBar.Name = "thicknessBar";
+            this.thicknessBar.Size = new System.Drawing.Size(154, 45);
+            this.thicknessBar.TabIndex = 7;
+            this.thicknessBar.Value = 1;
+            this.thicknessBar.Scroll += new System.EventHandler(this.thicknessBar_Scroll);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(951, 22);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(64, 13);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Grubość linii";
+            // 
+            // lineShape5
+            // 
+            this.lineShape5.Name = "lineShape5";
+            this.lineShape5.X1 = 927;
+            this.lineShape5.X2 = 927;
+            this.lineShape5.Y1 = -8;
+            this.lineShape5.Y2 = 75;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1354, 733);
-            this.Controls.Add(this.addGroupBox);
+            this.Controls.Add(this.groupBox);
             this.Controls.Add(this.pictureBox);
             this.DoubleBuffered = true;
             this.MaximizeBox = false;
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Rysowanie wielokątów";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
-            this.addGroupBox.ResumeLayout(false);
-            this.addGroupBox.PerformLayout();
+            this.groupBox.ResumeLayout(false);
+            this.groupBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.thicknessBar)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -199,7 +300,7 @@
 
         private System.Windows.Forms.PictureBox pictureBox;
         private System.Windows.Forms.Button addButton;
-        private System.Windows.Forms.GroupBox addGroupBox;
+        private System.Windows.Forms.GroupBox groupBox;
         private System.Windows.Forms.RadioButton newPoint;
         private System.Windows.Forms.RadioButton newPolygon;
         private System.Windows.Forms.RadioButton deletePolygon;
@@ -208,6 +309,16 @@
         private System.Windows.Forms.RadioButton movePolygon;
         private System.Windows.Forms.RadioButton movePoint;
         private System.Windows.Forms.RadioButton markPoly;
+        private System.Windows.Forms.Button changeColor;
+        private System.Windows.Forms.ColorDialog colorDialog;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TrackBar thicknessBar;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
+        private Microsoft.VisualBasic.PowerPacks.LineShape lineShape5;
+        private Microsoft.VisualBasic.PowerPacks.LineShape lineShape4;
+        private Microsoft.VisualBasic.PowerPacks.LineShape lineShape3;
+        private Microsoft.VisualBasic.PowerPacks.LineShape lineShape2;
+        private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
     }
 }
 

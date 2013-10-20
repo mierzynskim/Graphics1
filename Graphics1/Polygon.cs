@@ -26,7 +26,7 @@ namespace Graphics1
             set { _points = value; }
         }
 
-        private int _thickness;
+        private int _thickness = 1;
 
         public bool IsFinished { get; set; }
 
@@ -36,11 +36,20 @@ namespace Graphics1
             set { _thickness = value; }
         }
 
+        private Color color = Color.Black;
+
+        public Color Color
+        {
+            get { return color; }
+            set { color = value; }
+        }
+
         private void Bresenham(Point startPoint, Point endPoint, Size pictureBox, Graphics graphics)
         {
             using (Bitmap bitmap = new Bitmap(pictureBox.Width, pictureBox.Height))
             {
                 int xi = 0, yi = 0, dx = 0, dy = 0, d;
+                //ValidatePoints(ref startPoint, ref endPoint, pictureBox);
 
                 Point currentPoint = new Point(startPoint.X, startPoint.Y);
 
@@ -67,7 +76,7 @@ namespace Graphics1
                 }
 
 
-                bitmap.SetPixel(currentPoint.X, currentPoint.Y, Color.Black);
+                bitmap.SetPixel(currentPoint.X, currentPoint.Y, color);
 
                 if (dx > dy)
                 {
@@ -87,7 +96,7 @@ namespace Graphics1
                             currentPoint.Y += yi;
                             currentPoint.X += xi;
                         }
-                        bitmap.SetPixel(currentPoint.X, currentPoint.Y, Color.Black);
+                        bitmap.SetPixel(currentPoint.X, currentPoint.Y, color);
                     }
                 }
                 else
@@ -108,7 +117,7 @@ namespace Graphics1
                             currentPoint.Y += yi;
                             currentPoint.X += xi;
                         }
-                        bitmap.SetPixel(currentPoint.X, currentPoint.Y, Color.Black);
+                        bitmap.SetPixel(currentPoint.X, currentPoint.Y, color);
                     }
 
                 }
@@ -121,10 +130,20 @@ namespace Graphics1
         {
             for (int i = 0; i < Points.Count - 1; i++)
             {
-                Bresenham(Points[i], Points[i + 1], pictureBox, e);
+                for (int j = 0; j < Thickness; j++)
+                    Bresenham(new Point(Points[i].X + j, Points[i].Y), new Point(Points[i + 1].X + j, Points[i + 1].Y), pictureBox, e);
             }
-            Bresenham(Points[0], Points[Points.Count - 1], pictureBox, e);
+            for (int j = 0; j < Thickness; j++)
+                    Bresenham(new Point(Points[0].X + j, Points[0].Y), new Point(Points[Points.Count - 1].X + j, Points[Points.Count - 1].Y), pictureBox, e);
 
         }
+
+        private void ValidatePoints(ref Point p1, ref Point p2, Size size)
+        {
+            p1 = new Point(Math.Abs(p1.X) % size.Width, Math.Abs(p1.Y) % size.Height);
+            p2 = new Point(Math.Abs(p2.X) % size.Width, Math.Abs(p2.Y) % size.Height);
+        }
+
+
     }
 }
