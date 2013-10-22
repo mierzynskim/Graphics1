@@ -31,6 +31,9 @@
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.addButton = new System.Windows.Forms.Button();
             this.groupBox = new System.Windows.Forms.GroupBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.bresenham = new System.Windows.Forms.CheckBox();
+            this.WUcheckBox = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.thicknessBar = new System.Windows.Forms.TrackBar();
             this.changeColor = new System.Windows.Forms.Button();
@@ -51,6 +54,7 @@
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.groupBox.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.thicknessBar)).BeginInit();
             this.SuspendLayout();
             // 
@@ -73,7 +77,7 @@
             // 
             // addButton
             // 
-            this.addButton.Location = new System.Drawing.Point(7, 45);
+            this.addButton.Location = new System.Drawing.Point(107, 45);
             this.addButton.Name = "addButton";
             this.addButton.Size = new System.Drawing.Size(92, 23);
             this.addButton.TabIndex = 1;
@@ -83,6 +87,7 @@
             // 
             // groupBox
             // 
+            this.groupBox.Controls.Add(this.groupBox1);
             this.groupBox.Controls.Add(this.label1);
             this.groupBox.Controls.Add(this.thicknessBar);
             this.groupBox.Controls.Add(this.changeColor);
@@ -96,12 +101,47 @@
             this.groupBox.Controls.Add(this.newPolygon);
             this.groupBox.Controls.Add(this.addButton);
             this.groupBox.Controls.Add(this.shapeContainer1);
-            this.groupBox.Location = new System.Drawing.Point(93, 12);
+            this.groupBox.Location = new System.Drawing.Point(12, 12);
             this.groupBox.Name = "groupBox";
-            this.groupBox.Size = new System.Drawing.Size(1121, 87);
+            this.groupBox.Size = new System.Drawing.Size(1202, 87);
             this.groupBox.TabIndex = 4;
             this.groupBox.TabStop = false;
             this.groupBox.Text = "Menu";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.bresenham);
+            this.groupBox1.Controls.Add(this.WUcheckBox);
+            this.groupBox1.Location = new System.Drawing.Point(7, 38);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(94, 46);
+            this.groupBox1.TabIndex = 11;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Algorytm";
+            // 
+            // bresenham
+            // 
+            this.bresenham.AutoSize = true;
+            this.bresenham.Checked = true;
+            this.bresenham.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.bresenham.Location = new System.Drawing.Point(6, 13);
+            this.bresenham.Name = "bresenham";
+            this.bresenham.Size = new System.Drawing.Size(79, 17);
+            this.bresenham.TabIndex = 9;
+            this.bresenham.Text = "Bresenham";
+            this.bresenham.UseVisualStyleBackColor = true;
+            this.bresenham.CheckedChanged += new System.EventHandler(this.bresenham_CheckedChanged);
+            // 
+            // WUcheckBox
+            // 
+            this.WUcheckBox.AutoSize = true;
+            this.WUcheckBox.Location = new System.Drawing.Point(6, 29);
+            this.WUcheckBox.Name = "WUcheckBox";
+            this.WUcheckBox.Size = new System.Drawing.Size(45, 17);
+            this.WUcheckBox.TabIndex = 10;
+            this.WUcheckBox.Text = "WU";
+            this.WUcheckBox.UseVisualStyleBackColor = true;
+            this.WUcheckBox.CheckedChanged += new System.EventHandler(this.WUcheckBox_CheckedChanged);
             // 
             // label1
             // 
@@ -232,7 +272,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(1115, 68);
+            this.shapeContainer1.Size = new System.Drawing.Size(1196, 68);
             this.shapeContainer1.TabIndex = 6;
             this.shapeContainer1.TabStop = false;
             // 
@@ -291,6 +331,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.groupBox.ResumeLayout(false);
             this.groupBox.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.thicknessBar)).EndInit();
             this.ResumeLayout(false);
 
@@ -319,6 +361,9 @@
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape3;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape2;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
+        private System.Windows.Forms.CheckBox WUcheckBox;
+        private System.Windows.Forms.CheckBox bresenham;
+        private System.Windows.Forms.GroupBox groupBox1;
     }
 }
 

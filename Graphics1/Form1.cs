@@ -100,7 +100,6 @@ namespace Graphics1
                     foreach (var point in poly.Points)
                     {
                         DrawPoint(point, g, !poly.IsSelected ? Color.Red : Color.Blue);
-
                     }
                     if (poly.IsFinished)
                         poly.Draw(pictureBox.Size, g);
@@ -244,6 +243,16 @@ namespace Graphics1
                 {
                     pointsClickedCounter = 0;
                     polygons.Last().IsFinished = true;
+                    if (bresenham.Checked)
+                    {
+                        polygons.Last().BresenhamMode = true;
+                        polygons.Last().WUmode = false;
+                    }
+                    else
+                    {
+                        polygons.Last().WUmode = true;
+                        polygons.Last().BresenhamMode = false;
+                    }
                     polygons.Last().Points = MyGeometry.ConvexHull(polygons.Last().Points);
                     pictureBox.Invalidate();
                     currentPolygon++;
@@ -301,6 +310,17 @@ namespace Graphics1
             }
 
         }
+
+        private void bresenham_CheckedChanged(object sender, EventArgs e)
+        {
+            WUcheckBox.Checked = false;
+        }
+
+        private void WUcheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            bresenham.Checked = false;
+        }
+
 
     }
 }
